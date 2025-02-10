@@ -1,16 +1,16 @@
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View, ScrollView} from 'react-native';
 import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Button from '../../components/UI/Button';
-import RegisterForm from '../../components/auth/RegisterForm';
+import LoginForm from '../../components/auth/LoginForm';
 
-const RegisterScreen = ({navigation}) => {
-  const createAccountHandler = (values) => {
-
+const LoginScreen = ({navigation}) => {
+  const loginAccountHandler = (values) => {
+    console.log(values)
   }
 
-  const navigateToLogin = () => {
-    navigation.navigate('Login');
+  const navigateToRegister = () => {
+    navigation.navigate('Register');
   };
 
   return (
@@ -23,26 +23,26 @@ const RegisterScreen = ({navigation}) => {
       </View>
 
       <View style={styles.headerContainer}>
-        <Text lg bold >Welcome to your next planner!</Text>
-        <Text sm>Ready to sign up for an account?</Text>
+        <Text lg bold >Sign in</Text>
+        <Text sm>Log back in to your account.</Text>
       </View>
 
-      <RegisterForm onSubmit={createAccountHandler} />
+      <LoginForm onSubmit={loginAccountHandler} />
 
       <View style={styles.footerContainer}>
-        <Text style={styles.footerText}>Already have an account?</Text>
+        <Text style={styles.footerText}>Don't have an account?</Text>
         <Button
-          text='Login'
+          text='Register'
           color={'primary'}
           flat
-          onPress={navigateToLogin}
+          onPress={navigateToRegister}
         />
       </View>
     </View>
   );
 };
 
-export default RegisterScreen;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 20,
   },
   footerText: {
     borderTopWidth: 1,

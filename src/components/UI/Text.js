@@ -64,6 +64,5 @@ const styles= StyleSheet.create({
     },
     caption: {
         fontSize: 12,
-        textTransform: 'uppercase'
     }
 })
