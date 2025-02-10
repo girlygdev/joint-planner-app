@@ -3,10 +3,20 @@ import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Button from '../../components/UI/Button';
 import LoginForm from '../../components/auth/LoginForm';
+import { useAuth } from '../../hooks/auth/useAuth';
+import useFirebaseAuthError from '../../hooks/auth/useFirebaseAuthError';
+import InlineToast from '../../components/UI/InlineToast';
 
 const LoginScreen = ({navigation}) => {
-  const loginAccountHandler = (values) => {
-    console.log(values)
+  const { isLoading, login } = useAuth()
+  const {errorMessage, handleAuthError} = useFirebaseAuthError()
+
+  const loginAccountHandler = async (values) => {
+    try {
+      await login(values.email, values.password)
+    } catch (error) {
+      handleAuthError(error)
+    }
   }
 
   const navigateToRegister = () => {
@@ -27,7 +37,14 @@ const LoginScreen = ({navigation}) => {
         <Text sm>Log back in to your account.</Text>
       </View>
 
-      <LoginForm onSubmit={loginAccountHandler} />
+      <LoginForm isLoading={isLoading} onSubmit={loginAccountHandler} />
+
+      {errorMessage && (
+        <InlineToast
+          color='error'
+          message={errorMessage}
+        />
+      )}
 
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Don't have an account?</Text>

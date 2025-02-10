@@ -4,9 +4,12 @@ import Navigation from './src/navigation';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
+
+const queryClient =  new QueryClient();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,10 +29,10 @@ export default function App() {
   }
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <StatusBar style='auto' />
       <Navigation />
-    </>
+    </QueryClientProvider>
   );
 }
 

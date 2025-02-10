@@ -3,10 +3,20 @@ import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Button from '../../components/UI/Button';
 import RegisterForm from '../../components/auth/RegisterForm';
+import { useAuth } from '../../hooks/auth/useAuth';
+import InlineToast from '../../components/UI/InlineToast';
+import useFirebaseAuthError from '../../hooks/auth/useFirebaseAuthError';
 
 const RegisterScreen = ({navigation}) => {
-  const createAccountHandler = (values) => {
+  const { isLoading, register } = useAuth();
+  const {errorMessage, handleAuthError} = useFirebaseAuthError()
 
+  const createAccountHandler = async (values) => {
+    try {
+      await register(values.email, values.password)
+    } catch (error) {
+      handleAuthError(error)
+    }
   }
 
   const navigateToLogin = () => {
@@ -27,7 +37,14 @@ const RegisterScreen = ({navigation}) => {
         <Text sm>Ready to sign up for an account?</Text>
       </View>
 
-      <RegisterForm onSubmit={createAccountHandler} />
+      <RegisterForm isLoading={isLoading} onSubmit={createAccountHandler} />
+
+      {errorMessage && (
+        <InlineToast
+          color='error'
+          message={errorMessage}
+        />
+      )}
 
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Already have an account?</Text>

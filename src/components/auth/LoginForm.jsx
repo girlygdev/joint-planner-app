@@ -2,10 +2,10 @@ import {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import TextField from '../UI/TextField';
 import {Formik} from 'formik';
-import RegisterSchema from '../../schemas/RegisterSchema';
+import LoginSchema from '../../schemas/LoginSchema';
 import Button from '../UI/Button';
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit, isLoading=false }) => {
   const [authValues, setAuthValues] = useState({
     email: '',
     password: '',
@@ -15,7 +15,7 @@ const LoginForm = ({ onSubmit }) => {
     <Formik
       initialValues={authValues}
       onSubmit={onSubmit}
-      validationSchema={RegisterSchema}
+      validationSchema={LoginSchema}
     >
       {({handleChange, touched, errors, values, handleSubmit}) => (
         <>
@@ -57,6 +57,7 @@ const LoginForm = ({ onSubmit }) => {
             style={{marginTop: 8}}
             onPress={handleSubmit}
             color={'secondary'}
+            disabled={isLoading}
           />
         </>
       )}

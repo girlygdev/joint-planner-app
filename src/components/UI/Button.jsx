@@ -2,10 +2,11 @@ import {Pressable, StyleSheet} from 'react-native';
 import GlobalStyle from '../../constants/colors';
 import Text from './Text';
 
-const Button = ({text, onPress, flat, light, color, outlined, style}) => {
+const Button = ({text, onPress, flat, light, color, outlined, style, disabled=false}) => {
   return (
     <Pressable
       onPress={onPress.bind(this)}
+      disabled={disabled}
       style={({pressed}) => [
         styles.button,
         pressed && styles.pressed,

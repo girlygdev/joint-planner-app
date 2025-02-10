@@ -1,14 +1,13 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import useAuthStore from '../store/useAuthStore';
 import AuthStackNavigator from './AuthStackNavigator';
+import CalendarHomeScreen from '../screens/calendar/CalendarHomeScreen';
+import { useAuth } from '../hooks/auth/useAuth';
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
-  const {user} = useAuthStore((state) => state);
-
-  
+  const { user } = useAuth()
 
   return (
     <NavigationContainer>
@@ -22,7 +21,13 @@ const Navigation = () => {
             component={AuthStackNavigator}
           />
         )}
-        
+
+        {user && (
+          <Stack.Screen
+            name='Calendar'
+            component={CalendarHomeScreen}
+          />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
