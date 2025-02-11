@@ -1,16 +1,16 @@
 const GlobalStyle = {
     colors: {
       primary: {
-        light: '#A6E3E9',
+        light: '#e6f7f8',
         main: '#71C9CE',
         dark: '#00ADB5',
-        contrast: '#252a34'
+        contrast: '#fefefe'
       },
       secondary: {
         light: '#FFD6EC',
         main: '#FFA1CF',
         dark: '#FFD6EC',
-        contrast: '#252a34'
+        contrast: '#fefefe'
       },
       dark: {
         light: '#666A71',
@@ -50,7 +50,10 @@ const GlobalStyle = {
       },
       overlay: '#edf9fb',
       background: '#f6fcfd',
-      text: '#252a34'
+      text: {
+        dark: '#252a34',
+        light: '#fefefe'
+      }
     },
     shadow :{
       unset: {

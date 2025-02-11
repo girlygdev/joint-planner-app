@@ -34,7 +34,7 @@ const styles= StyleSheet.create({
     text: {
         fontFamily: 'poppins',
         fontSize: 16,
-        color: GlobalStyle.colors.text
+        color: GlobalStyle.colors.text.dark
     },
     bold: {
         fontFamily: 'poppins-bold'

@@ -1,8 +1,8 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthStackNavigator from './AuthStackNavigator';
-import CalendarHomeScreen from '../screens/calendar/CalendarHomeScreen';
 import { useAuth } from '../hooks/auth/useAuth';
+import AppNavigator from './AppNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +24,8 @@ const Navigation = () => {
 
         {user && (
           <Stack.Screen
-            name='Calendar'
-            component={CalendarHomeScreen}
+            name='App'
+            component={AppNavigator}
           />
         )}
       </Stack.Navigator>
