@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 
-const ListScreen = () => {
+const NoteScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       
@@ -9,7 +9,7 @@ const ListScreen = () => {
   );
 };
 
-export default ListScreen;
+export default NoteScreen;
 
 const styles = StyleSheet.create({
     container: {

@@ -1,7 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CalendarScreen from '../screens/calendar/CalendarScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
-import ListScreen from '../screens/list/ListScreen';
+import NoteScreen from '../screens/note/NoteScreen';
 import GlobalStyle from '../constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -36,13 +36,13 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name='List'
-        component={ListScreen}
+        name='Note'
+        component={NoteScreen}
         options={{
           tabBarIcon: ({color, size}) => {
             return (
               <Ionicons
-                name='list'
+                name='albums-outline'
                 size={24}
                 color={color}
               />
