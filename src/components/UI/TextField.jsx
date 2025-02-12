@@ -22,7 +22,8 @@ const styles= StyleSheet.create({
         margin: 0,
         backgroundColor: GlobalStyle.colors.light.light,
         borderRadius: 8,
-        paddingHorizontal: 8
+        paddingHorizontal: 8,
+        paddingVertical: 8
     },
     inputError: {
         borderColor: GlobalStyle.colors.error.main,

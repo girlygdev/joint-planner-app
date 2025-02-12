@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import Text from '../UI/Text';
 import GlobalStyle from '../../constants/colors';
 
-const AgendaListItem = ({date, agenda}) => {
+const AgendaListItemComponent = ({date, agenda}) => {
   const {name, time} = agenda;
   
   return (
@@ -14,7 +14,7 @@ const AgendaListItem = ({date, agenda}) => {
   );
 };
 
-export default AgendaListItem;
+export default AgendaListItemComponent;
 
 const styles = StyleSheet.create({
   container: {

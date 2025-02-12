@@ -2,7 +2,7 @@ import {Pressable, StyleSheet} from 'react-native';
 import GlobalStyle from '../../constants/colors';
 import Text from './Text';
 
-const Button = ({text, onPress, flat, light, color='primary', outlined, style, disabled=false}) => {
+const Button = ({text, onPress, flat, light, color='primary', outlined, style, disabled=false, inline, lightText}) => {
   return (
     <Pressable
       onPress={onPress.bind(this)}
@@ -19,6 +19,7 @@ const Button = ({text, onPress, flat, light, color='primary', outlined, style, d
             ...GlobalStyle.shadow.unset
         },
         flat && styles.flat,
+        inline && {width: 'auto'},
         style,
       ]}
     >
@@ -29,6 +30,7 @@ const Button = ({text, onPress, flat, light, color='primary', outlined, style, d
             color && {color: GlobalStyle.colors[color].contrast},
             outlined && {color: GlobalStyle.colors[color ?? 'primary'].main},
             flat && {color: GlobalStyle.colors[color].main},
+            lightText && { color: GlobalStyle.colors.text.light}
         ]}
       >
         {text}

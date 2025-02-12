@@ -1,4 +1,4 @@
-import {Image, StyleSheet, View, ScrollView} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Button from '../../components/UI/Button';

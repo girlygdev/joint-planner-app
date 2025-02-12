@@ -8,7 +8,7 @@ import {
   CalendarProvider,
   ExpandableCalendar,
 } from 'react-native-calendars';
-import AgendaListItem from '../../components/calendar/AgendaListItem';
+import AgendaListItemComponent from '../../components/calendar/AgendaListItemComponent';
 import IconButton from '../../components/UI/IconButton';
 import EmptyAgendaComponent from '../../components/calendar/EmptyAgendaComponent';
 import {isEmpty} from 'lodash';
@@ -17,7 +17,7 @@ import Text from '../../components/UI/Text';
 // Temporary remove defaultProps error
 ExpandableCalendar.defaultProps = undefined;
 
-const CalendarHomeScreen = () => {
+const CalendarHomeScreen = ({ navigation }) => {
   const currentDate = moment().format(Constants.dateFormat);
   const [selectedDate, setSelectedDate] = useState(currentDate);
 
@@ -54,6 +54,12 @@ const CalendarHomeScreen = () => {
     [selectedDate]
   );
 
+  const addPlanHandler = () => {
+    navigation.navigate('AddAgenda', {
+      date: selectedDate
+    })
+  }
+
   return (
     <CalendarProvider
       date={selectedDate}
@@ -78,7 +84,7 @@ const CalendarHomeScreen = () => {
         <AgendaList
           sections={dateSections}
           renderItem={({item, section}) => (
-            <AgendaListItem
+            <AgendaListItemComponent
               date={section.title}
               agenda={item}
             />
@@ -89,8 +95,7 @@ const CalendarHomeScreen = () => {
                 <Text
                   color='primary'
                   dark
-                  cursive
-                  lg
+                  sm
                 >
                   {info === currentDate ? 'Today, ' : ''}
                   {moment(info).format(Constants.sectionFormat)}
@@ -107,7 +112,7 @@ const CalendarHomeScreen = () => {
 
       <IconButton
         icon='add'
-        onPress={() => console.log()}
+        onPress={addPlanHandler}
         outlined
         style={styles.addButton}
       />
