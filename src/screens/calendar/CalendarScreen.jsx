@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet, View} from 'react-native';
 import moment from 'moment';
 import {Constants} from '../../constants/constants';
 import GlobalStyle from '../../constants/colors';
@@ -13,10 +13,9 @@ import IconButton from '../../components/UI/IconButton';
 import EmptyAgendaComponent from '../../components/calendar/EmptyAgendaComponent';
 import _, {isEmpty, map} from 'lodash';
 import Text from '../../components/UI/Text';
-import { db } from '../../../firebaseConfig';
-import {collection, getDocs, query, where, orderBy} from 'firebase/firestore';
-import { useIsFocused } from '@react-navigation/native';
-
+import {db} from '../../../firebaseConfig';
+import {collection, query, orderBy, onSnapshot} from 'firebase/firestore';
+import {useIsFocused} from '@react-navigation/native';
 
 // Temporary remove defaultProps error
 ExpandableCalendar.defaultProps = undefined;
@@ -24,80 +23,72 @@ ExpandableCalendar.defaultProps = undefined;
 const CalendarHomeScreen = ({navigation}) => {
   const currentDate = moment().format(Constants.dateFormat);
   const [selectedDate, setSelectedDate] = useState(currentDate);
-  const isFocused = useIsFocused()
-
   const [events, setEvents] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (isFocused) {
-      getEventsByDate()
-    }
-  }, [selectedDate, isFocused])
+    if (!isFocused) return;
 
-  const formatData = (data) => {
-    const events = _.chain(data).map((event) => {
-      return ({
-        id: event.id,
-        date: event.date,
-        title: event.content.title ?? '',
-        notes: event.content.notes ?? '',
-        time: event.content.time ?? null,
-      })
-    })
-    .groupBy('date')
-    .value()
+    const eventsRef = collection(db, 'events');
+    const q = query(eventsRef, orderBy('timestamp', 'asc'));
 
-    return events
-  }
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const allEvents = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-  const getEventsByDate = async () => {
-    try {
-      const eventsRef = collection(db, 'events');
-      const q = query(
-        eventsRef,
-        where("date", "==", selectedDate), // Filter by exact date
-        orderBy("timestamp", "desc") // Sort by most recent first
-      );
+        setEvents(allEvents);
+      },
+      (error) => {
+        Alert.alert('Oops!', 'An error occurred while fetching data.');
+        console.error(error);
+      }
+    );
 
-      const querySnapshot = await getDocs(q);
-      const posts = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    return () => unsubscribe();
+  }, [selectedDate, isFocused]);
 
-      setEvents(posts)
-      formatData(posts)
-      
-    } catch (error) {
-      Alert.alert('Oops!', 'An error occurred while fetching data.');
-      console.log(error);
-      
-    }
-  };
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => event.date === selectedDate);
+  }, [events, selectedDate]);
 
   const formattedEvents = useMemo(() => {
-    return formatData(events)
-  }, [events])
+    const formatted = _.map(filteredEvents, (event) => ({
+      id: event.id,
+      date: event.date,
+      title: event.content.title ?? '',
+      notes: event.content.notes ?? '',
+      time: event.content.time ?? null,
+    }));
+
+    return _.groupBy(formatted, 'date');
+  }, [filteredEvents]);
 
   const dateSections = useMemo(() => {
-    return formattedEvents
-      ? Object.keys(formattedEvents).map((date) => ({
-          title: date,
-          data: formattedEvents[date],
-        }))
-      : [];
+    return Object.keys(formattedEvents).map((date) => ({
+      title: date,
+      data: formattedEvents[date],
+    }));
   }, [formattedEvents]);
 
-  const markedDates = useMemo(
-    () => ({
-      [selectedDate]: {
-        selected: true,
+  const markedDates = useMemo(() => {
+    const groupedEvents = _.groupBy(events, 'date');
+    const marked = {};
+
+    Object.keys(groupedEvents).forEach((date) => {
+      marked[date] = {
+        marked: true,
+        selected: date === selectedDate,
         selectedColor: GlobalStyle.colors.secondary.main,
         selectedTextColor: GlobalStyle.colors.text.light,
-      },
-    }),
-    [selectedDate]
-  );
+        dotColor: date != selectedDate ? GlobalStyle.colors.secondary.main : '',
+      };
+    });
+    return marked;
+  }, [events, selectedDate]);
 
   const addPlanHandler = () => {
     navigation.navigate('AddAgenda', {
@@ -124,43 +115,45 @@ const CalendarHomeScreen = ({navigation}) => {
           arrowColor: GlobalStyle.colors.secondary.main,
         }}
       />
+      <SafeAreaView style={{flex: 1}}>
+        {!isEmpty(formattedEvents) ? (
+          <AgendaList
+            keyExtractor={(item) => item.id}
+            sections={dateSections}
+            renderItem={({item, section}) => (
+              <AgendaListItemComponent
+                date={section.title}
+                agenda={item}
+              />
+            )}
+            renderSectionHeader={(info) => {
+              return (
+                <View style={styles.sectionContainer}>
+                  <Text
+                    color='primary'
+                    dark
+                    sm
+                  >
+                    {info === currentDate ? 'Today, ' : ''}
+                    {moment(info).format(Constants.sectionFormat)}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <EmptyAgendaComponent />
+          </View>
+        )}
 
-      {!isEmpty(formattedEvents) ? (
-        <AgendaList
-          sections={dateSections}
-          renderItem={({item, section}) => (
-            <AgendaListItemComponent
-              date={section.title}
-              agenda={item}
-            />
-          )}
-          renderSectionHeader={(info) => {
-            return (
-              <View style={styles.sectionContainer}>
-                <Text
-                  color='primary'
-                  dark
-                  sm
-                >
-                  {info === currentDate ? 'Today, ' : ''}
-                  {moment(info).format(Constants.sectionFormat)}
-                </Text>
-              </View>
-            );
-          }}
+        <IconButton
+          icon='add'
+          onPress={addPlanHandler}
+          outlined
+          style={styles.addButton}
         />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <EmptyAgendaComponent />
-        </View>
-      )}
-
-      <IconButton
-        icon='add'
-        onPress={addPlanHandler}
-        outlined
-        style={styles.addButton}
-      />
+      </SafeAreaView>
     </CalendarProvider>
   );
 };
