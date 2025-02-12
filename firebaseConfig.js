@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import Constants from "expo-constants";
 
 const firebaseConfig = {
@@ -18,5 +18,5 @@ const db = getFirestore(app);
 
 export { 
   auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged,
-  db, collection, addDoc, serverTimestamp
+  db, 
 };

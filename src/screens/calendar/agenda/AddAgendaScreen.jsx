@@ -4,13 +4,9 @@ import moment from 'moment';
 import GlobalStyle from '../../../constants/colors';
 import AgendaFormComponent from '../../../components/calendar/AgendaFormComponent';
 import useAuthStore from '../../../store/useAuthStore';
-import {
-  addDoc,
-  collection,
-  db,
-  serverTimestamp,
-} from '../../../../firebaseConfig';
+import {db} from '../../../../firebaseConfig';
 import ScreenLoader from '../../../components/UI/ScreenLoader';
+import {collection, addDoc, serverTimestamp} from 'firebase/firestore';
 
 const AddAgendaScreen = ({route, navigation}) => {
   const {date} = route.params;
@@ -21,13 +17,9 @@ const AddAgendaScreen = ({route, navigation}) => {
     setIsLoading(true);
 
     try {
-      const eventData = {
-        ...values,
-        date,
-      };
-
       const data = {
-        content: eventData,
+        date: date,
+        content: values,
         timestamp: serverTimestamp(),
         userId: user.uid,
       };
@@ -36,8 +28,9 @@ const AddAgendaScreen = ({route, navigation}) => {
       await addDoc(collection(db, 'events'), data);
 
       setIsLoading(false);
-      navigation.goBack()
+      navigation.goBack();
     } catch (error) {
+      console.log(error);
       setIsLoading(false);
     }
   };
