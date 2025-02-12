@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import Constants from "expo-constants";
 
 const firebaseConfig = {
@@ -13,21 +14,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
-
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-
-// const firebaseConfig = {
-//   apiKey: "AIzaSyC6OkOOJpQ8aoKonOFhNUxXJLYr_5XI6To",
-//   authDomain: "next-planner-5fd59.firebaseapp.com",
-//   projectId: "next-planner-5fd59",
-//   storageBucket: "next-planner-5fd59.firebasestorage.app",
-//   messagingSenderId: "1035697456696",
-//   appId: "1:1035697456696:web:61371242063115da0d88cd",
-//   measurementId: "G-BFY7NV7BX7"
-// };
-
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+export { 
+  auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged,
+  db, collection, addDoc, serverTimestamp
+};
