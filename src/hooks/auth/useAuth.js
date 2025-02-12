@@ -7,30 +7,61 @@ import {
 } from '../../../firebaseConfig';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import QueryKeys from '../../actions/auth/QueryKeys';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuthStore from '../../store/useAuthStore';
 
-const fetchUser = () => {
-  return new Promise((resolve) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      resolve(user);
+const fetchUser = async () => {
+  try {
+    const storedUser = await AsyncStorage.getItem('authUser');
+    if (storedUser) {
+      return JSON.parse(storedUser);
+    }
+
+    return new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userObj = { uid: user.uid, email: user.email };
+          await AsyncStorage.setItem('authUser', JSON.stringify(userObj));
+          resolve(userObj);
+        } else {
+          await AsyncStorage.removeItem('authUser');
+          resolve(null);
+        }
+      });
+
+      return () => unsubscribe();
     });
-    return () => unsubscribe();
-  });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
 };
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
+  const { setUser, clearUser } = useAuthStore(state => state)
 
-  // Use React Query to manage auth state
   const {data: user, isLoading} = useQuery({
     queryKey: QueryKeys.default,
     queryFn: fetchUser,
-    staleTime: Infinity, // Keep user data fresh
+    onSuccess: (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        clearUser();
+      }
+    }
   });
 
   const login = async (email, password) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      queryClient.invalidateQueries(['authUser']);
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      const userObj = { uid: response.user.uid, email: response.user.email };
+
+      await AsyncStorage.setItem('authUser', JSON.stringify(userObj));
+      setUser(userObj)
+
+      queryClient.invalidateQueries(QueryKeys.default);
     } catch (error) {
       throw error;
     }
@@ -38,8 +69,13 @@ export const useAuth = () => {
 
   const register = async (email, password) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      queryClient.invalidateQueries(['authUser']);
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      const userObj = { uid: response.user.uid, email: response.user.email };
+
+      await AsyncStorage.setItem('authUser', JSON.stringify(userObj));
+      setUser(userObj)
+
+      queryClient.invalidateQueries(QueryKeys.default);
     } catch (error) {
       throw error;
     }
@@ -47,7 +83,10 @@ export const useAuth = () => {
 
   const logout = async () => {
     await signOut(auth);
-    queryClient.invalidateQueries(['authUser']);
+    await AsyncStorage.removeItem('authUser')
+
+    clearUser()
+    queryClient.invalidateQueries(QueryKeys.default);
   };
 
   return {user, isLoading, login, logout, register};
