@@ -1,3 +1,4 @@
 export const Constants = {
-    dateFormat: 'YYYY-MM-DD'
+    dateFormat: 'YYYY-MM-DD',
+    sectionFormat: 'dddd, MMM D'
 }

@@ -1,7 +1,7 @@
 import {StyleSheet, Text as TextRN} from 'react-native'
 import GlobalStyle from '../../constants/colors'
 
-const Text = ({ children, bold, light, sm, md, lg, xl, overline, caption, m=0, my=0, mx=0, p=0, px=0, py=0, color, center, style}) => {
+const Text = ({ children, bold, light, sm, md, lg, xl, overline, caption, m=0, my=0, mx=0, p=0, px=0, py=0, color, center, cursive, dark, style}) => {
   return (
     <TextRN style={[
         styles.text,
@@ -11,6 +11,7 @@ const Text = ({ children, bold, light, sm, md, lg, xl, overline, caption, m=0, m
         md && styles.md,
         lg && styles.lg,
         xl && styles.xl,
+        cursive && styles.cursive,
         overline && styles.overline,
         caption && styles.caption,
         {margin: m},
@@ -20,6 +21,7 @@ const Text = ({ children, bold, light, sm, md, lg, xl, overline, caption, m=0, m
         {paddingHorizontal: px},
         {paddingVertical: py},
         color && {color: GlobalStyle.colors[color].main},
+        color && dark && {color: GlobalStyle.colors[color].dark},
         center && styles.center,
         style
     ]}>
@@ -35,6 +37,9 @@ const styles= StyleSheet.create({
         fontFamily: 'poppins',
         fontSize: 16,
         color: GlobalStyle.colors.text.dark
+    },
+    cursive: {
+        fontFamily: 'petit'
     },
     bold: {
         fontFamily: 'poppins-bold'

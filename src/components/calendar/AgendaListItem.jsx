@@ -18,12 +18,14 @@ export default AgendaListItem;
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 20,
-    backgroundColor: GlobalStyle.colors.primary.light,
-    borderLeftColor: GlobalStyle.colors.primary.main,
+    marginLeft: 30,
+    marginRight: 20,
+    // backgroundColor: GlobalStyle.colors.primary.light,
+    borderLeftColor: GlobalStyle.colors.secondary.main,
     borderLeftWidth: 4,
-    padding: 8,
     borderRadius: 2,
-    ...GlobalStyle.shadow[0],
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    // ...GlobalStyle.shadow[0],
   },
 });

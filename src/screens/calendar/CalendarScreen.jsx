@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useMemo, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import moment from 'moment';
 import {Constants} from '../../constants/constants';
 import GlobalStyle from '../../constants/colors';
@@ -10,18 +10,49 @@ import {
 } from 'react-native-calendars';
 import AgendaListItem from '../../components/calendar/AgendaListItem';
 import IconButton from '../../components/UI/IconButton';
+import EmptyAgendaComponent from '../../components/calendar/EmptyAgendaComponent';
+import {isEmpty} from 'lodash';
+import Text from '../../components/UI/Text';
+
+// Temporary remove defaultProps error
+ExpandableCalendar.defaultProps = undefined;
 
 const CalendarHomeScreen = () => {
-  const [selectedDate, setSelectedDate] = useState(
-    moment().format(Constants.dateFormat)
-  );
+  const currentDate = moment().format(Constants.dateFormat);
+  const [selectedDate, setSelectedDate] = useState(currentDate);
 
   const [items, setItems] = useState({
     '2025-02-11': [{name: 'Meeting with Client', time: '10:00 AM'}],
     '2025-02-12': [{name: 'Doctor Appointment', time: '3:00 PM'}],
-    '2025-02-14': [{name: 'Valentine’s Dinner', time: '7:00 PM'}],
-    '2025-02-14': [{name: 'Market Dinner'}],
+    '2025-02-14': [
+      {name: 'Valentine’s Dinner', time: '7:00 PM'},
+      {name: 'Market Dinner'},
+    ],
   });
+
+  const dateEvents = useMemo(() => {
+    return items[selectedDate] ? {[selectedDate]: items[selectedDate]} : {};
+  }, [selectedDate, items]);
+
+  const dateSections = useMemo(() => {
+    return dateEvents
+      ? Object.keys(dateEvents).map((date) => ({
+          title: date,
+          data: items[date],
+        }))
+      : [];
+  }, [dateEvents]);
+
+  const markedDates = useMemo(
+    () => ({
+      [selectedDate]: {
+        selected: true,
+        selectedColor: GlobalStyle.colors.secondary.main,
+        selectedTextColor: GlobalStyle.colors.text.light,
+      },
+    }),
+    [selectedDate]
+  );
 
   return (
     <CalendarProvider
@@ -30,13 +61,7 @@ const CalendarHomeScreen = () => {
     >
       <ExpandableCalendar
         initialPosition='closed'
-        markedDates={{
-          [selectedDate]: {
-            selected: true,
-            selectedColor: GlobalStyle.colors.secondary.main,
-            selectedTextColor: GlobalStyle.colors.text.light,
-          },
-        }}
+        markedDates={markedDates}
         onDayPress={(day) => setSelectedDate(day.dateString)}
         theme={{
           todayTextColor: GlobalStyle.colors.primary.main,
@@ -49,19 +74,36 @@ const CalendarHomeScreen = () => {
         }}
       />
 
-      <AgendaList
-        sections={Object.keys(items).map((date) => ({
-          title: date,
-          data: items[date],
-        }))}
-        renderItem={({item, section}) => (
-          <AgendaListItem
-            date={section.title}
-            agenda={item}
-          />
-        )}
-        sectionStyle={styles.section}
-      />
+      {!isEmpty(dateEvents) ? (
+        <AgendaList
+          sections={dateSections}
+          renderItem={({item, section}) => (
+            <AgendaListItem
+              date={section.title}
+              agenda={item}
+            />
+          )}
+          renderSectionHeader={(info) => {
+            return (
+              <View style={styles.sectionContainer}>
+                <Text
+                  color='primary'
+                  dark
+                  cursive
+                  lg
+                >
+                  {info === currentDate ? 'Today, ' : ''}
+                  {moment(info).format(Constants.sectionFormat)}
+                </Text>
+              </View>
+            );
+          }}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <EmptyAgendaComponent />
+        </View>
+      )}
 
       <IconButton
         icon='add'
@@ -79,19 +121,20 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: GlobalStyle.colors.light.light,
   },
-  section: {
+  sectionContainer: {
+    paddingTop: 20,
+    paddingBottom: 12,
+    paddingHorizontal: 20,
     backgroundColor: 'transparent',
-  },
-  sectionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    padding: 0,
-    margin: 0,
   },
   addButton: {
     position: 'absolute',
     bottom: 20,
     right: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
