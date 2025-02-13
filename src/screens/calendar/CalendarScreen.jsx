@@ -26,7 +26,7 @@ const CalendarHomeScreen = ({navigation}) => {
   const [selectedDate, setSelectedDate] = useState(currentDate);
   const [events, setEvents] = useState([]);
   const isFocused = useIsFocused();
-  const {user} = useAuthStore(state => state)
+  const {user, setEventCount} = useAuthStore(state => state)
 
   useEffect(() => {
     if (!isFocused) return;
@@ -43,6 +43,7 @@ const CalendarHomeScreen = ({navigation}) => {
         }));
         
         setEvents(allEvents);
+        setEventCount(allEvents.length)
       },
       (error) => {
         Alert.alert('Oops!', 'An error occurred while fetching data.');

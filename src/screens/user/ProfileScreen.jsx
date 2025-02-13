@@ -25,10 +25,12 @@ import {
 import {auth, db} from '../../../firebaseConfig';
 import {deleteUser} from 'firebase/auth';
 import useAppStore from '../../store/useAppStore';
+import useAuthStore from '../../store/useAuthStore';
 
 const ProfileScreen = () => {
   const {user, logout} = useAuth();
   const {setIsLoading} = useAppStore((state) => state);
+  const {eventCount, taskCount} = useAuthStore(state => state)
 
   const permanentDeleteAccount = async () => {
     setIsLoading(true);
@@ -119,10 +121,10 @@ const ProfileScreen = () => {
               <Text
                 bold
                 md
-                color={'secondary'}
+                color={eventCount ? 'secondary' : 'light'}
                 style={{marginHorizontal: 5, paddingVertical: 0}}
               >
-                0
+                {eventCount}
               </Text>
             </View>
 
@@ -138,10 +140,10 @@ const ProfileScreen = () => {
               <Text
                 bold
                 md
-                color={'secondary'}
+                color={taskCount ? 'secondary' : 'light'}
                 style={{marginHorizontal: 5, paddingVertical: 0}}
               >
-                0
+                {taskCount}
               </Text>
             </View>
           </View>

@@ -5,6 +5,12 @@ const useAuthStore = create((set, get) => ({
   user: null,
   setUser: (user) => set({user}),
   clearUser: () => set({user: null}),
+
+  eventCount: 0,
+  setEventCount: (eventCount) => set({eventCount}),
+
+  taskCount: 0,
+  setTaskCount: (taskCount) => set({taskCount}),
 }));
 
 // Restore user on app launch
