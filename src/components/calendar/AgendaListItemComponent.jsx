@@ -9,6 +9,7 @@ const AgendaListItemComponent = ({date, agenda, onPress}) => {
   return (
     <Pressable style={({ pressed}) => [styles.container, pressed && styles.pressed]} onPress={onPress}>
       <Text>{title}</Text>
+      
       {notes && (
         <Text
           color='info'
@@ -18,7 +19,7 @@ const AgendaListItemComponent = ({date, agenda, onPress}) => {
         </Text>
       )}
 
-      {time && <Text color='secondary' overline>{time}</Text>}
+      {time && <Text color='primary' overline>{time}</Text>}
     </Pressable>
   );
 };

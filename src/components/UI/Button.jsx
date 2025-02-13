@@ -2,7 +2,7 @@ import {Pressable, StyleSheet} from 'react-native';
 import GlobalStyle from '../../constants/colors';
 import Text from './Text';
 
-const Button = ({text, onPress, flat, light, color='primary', outlined, style, disabled=false, inline, lightText}) => {
+const Button = ({text, onPress, flat, light, color='primary', outlined, style, disabled=false, inline, lightText, rounded}) => {
   return (
     <Pressable
       onPress={onPress.bind(this)}
@@ -20,6 +20,7 @@ const Button = ({text, onPress, flat, light, color='primary', outlined, style, d
         },
         flat && styles.flat,
         inline && {width: 'auto'},
+        rounded && styles.rounded,
         style,
       ]}
     >
@@ -57,4 +58,8 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.5,
   },
+  rounded: {
+    paddingHorizontal: 20,
+    borderRadius: 50
+  }
 });

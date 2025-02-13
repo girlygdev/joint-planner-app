@@ -17,7 +17,8 @@ const AppNavigator = () => {
           fontFamily: 'poppins',
         },
         tabBarActiveTintColor: GlobalStyle.colors.secondary.contrast,
-        tabBarActiveBackgroundColor: GlobalStyle.colors.secondary.main
+        tabBarActiveBackgroundColor: GlobalStyle.colors.secondary.main,
+        tabBarStyle: { backgroundColor: GlobalStyle.colors.secondary.main}
       }}
     >
       <Tab.Screen
