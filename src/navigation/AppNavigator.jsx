@@ -37,13 +37,13 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name='Note'
+        name='Tasks'
         component={NoteScreen}
         options={{
           tabBarIcon: ({color, size}) => {
             return (
               <Ionicons
-                name='albums-outline'
+                name='checkbox-outline'
                 size={24}
                 color={color}
               />

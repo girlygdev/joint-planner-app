@@ -98,6 +98,12 @@ const CalendarHomeScreen = ({navigation}) => {
     });
   };
 
+  const editListHandler = (event) => {
+    navigation.navigate('EditAgenda', {
+      event: event
+    })
+  }
+
   return (
     <CalendarProvider
       date={selectedDate}
@@ -126,6 +132,7 @@ const CalendarHomeScreen = ({navigation}) => {
               <AgendaListItemComponent
                 date={section.title}
                 agenda={item}
+                onPress={editListHandler.bind(this, item)}
               />
             )}
             renderSectionHeader={(info) => {

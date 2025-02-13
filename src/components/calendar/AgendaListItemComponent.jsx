@@ -1,13 +1,13 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import Text from '../UI/Text';
 import GlobalStyle from '../../constants/colors';
 
-const AgendaListItemComponent = ({date, agenda}) => {
+const AgendaListItemComponent = ({date, agenda, onPress}) => {
   const {title, notes, time} = agenda;
 
   return (
-    <View style={styles.container}>
+    <Pressable style={({ pressed}) => [styles.container, pressed && styles.pressed]} onPress={onPress}>
       <Text>{title}</Text>
       {notes && (
         <Text
@@ -18,8 +18,8 @@ const AgendaListItemComponent = ({date, agenda}) => {
         </Text>
       )}
 
-      {time && <Text color='success' overline>{time}</Text>}
-    </View>
+      {time && <Text color='secondary' overline>{time}</Text>}
+    </Pressable>
   );
 };
 
@@ -35,4 +35,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 10,
   },
+  pressed: {
+    opacity: .7,
+  }
 });

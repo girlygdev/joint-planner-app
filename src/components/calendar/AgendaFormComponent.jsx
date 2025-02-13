@@ -96,15 +96,15 @@ const AgendaFormComponent = ({
                   : ''
               }
               inputProps={{
-                maxLength: 150,
+                maxLength: 200,
                 placeholder: 'Notes',
                 value: values.notes,
                 onChangeText: handleChange('notes'),
                 multiline: true,
-                numberOfLines: 4,
+                numberOfLines: 5,
               }}
               style={{
-                height: 110,
+                height: 120,
                 verticalAlign: 'top',
               }}
             />
