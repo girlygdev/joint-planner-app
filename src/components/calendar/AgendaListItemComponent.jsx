@@ -11,14 +11,14 @@ const AgendaListItemComponent = ({date, agenda}) => {
       <Text>{title}</Text>
       {notes && (
         <Text
-          caption
+          color='info'
           cursive
         >
           {notes}
         </Text>
       )}
 
-      {time && <Text overline>{time}</Text>}
+      {time && <Text color='success' overline>{time}</Text>}
     </View>
   );
 };

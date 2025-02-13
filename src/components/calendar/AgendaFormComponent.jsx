@@ -41,11 +41,28 @@ const AgendaFormComponent = ({
     }
   };
 
+  const submitHandler = (values) => {
+    const formData = {
+      title: values.title ?? '',
+      notes: values.notes ?? ''
+    }
+
+    if (values.time) {
+      if (Platform.OS == 'ios') {
+        formData.time = moment(values.time).format('hh:mm A')
+      } else {
+        formData.time = values.time
+      }
+    }
+
+    onSubmit(formData)
+  }
+
   return (
     <Formik
       initialValues={initValues}
       enableReinitialize
-      onSubmit={onSubmit}
+      onSubmit={submitHandler}
       validationSchema={AgendaSchema}
     >
       {({

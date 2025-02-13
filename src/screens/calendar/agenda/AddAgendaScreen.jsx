@@ -21,10 +21,9 @@ const AddAgendaScreen = ({route, navigation}) => {
         date: date,
         content: values,
         timestamp: serverTimestamp(),
-        userId: user.uid,
+        uid: user.uid,
       };
 
-      await addDoc(collection(db, 'users', user.uid, 'events'), data);
       await addDoc(collection(db, 'events'), data);
 
       setIsLoading(false);

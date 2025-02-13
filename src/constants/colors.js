@@ -48,7 +48,7 @@ const GlobalStyle = {
         dark: '#16423C',
         contrast: '#252a34'
       },
-      overlay: '#edf9fb',
+      overlay: '#f4fbfd',
       background: '#f6fcfd',
       text: {
         dark: '#252a34',

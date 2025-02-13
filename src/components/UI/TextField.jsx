@@ -6,7 +6,7 @@ const TextField = ({ label, error, inputProps, style }) => {
   return (
     <View>
         {label && <Text caption color={error ? 'error' : ''}>{label}</Text>}
-        <TextInput style={[styles.input, style, error && styles.inputError]} {...inputProps} />
+        <TextInput style={[styles.input, style, error && styles.inputError]} {...inputProps} placeholderTextColor={GlobalStyle.colors.light.main} />
         { error && <Text caption color={'error'}>{error}</Text>}
     </View>
   )

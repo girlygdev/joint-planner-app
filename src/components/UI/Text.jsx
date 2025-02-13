@@ -39,7 +39,7 @@ const styles= StyleSheet.create({
         color: GlobalStyle.colors.text.dark
     },
     cursive: {
-        fontFamily: 'petit'
+        fontFamily: 'caveat'
     },
     bold: {
         fontFamily: 'poppins-bold'

@@ -13,7 +13,7 @@ const queryClient =  new QueryClient();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'petit': require('./assets/fonts/PetitFormalScript-Regular.ttf'),
+    'caveat': require('./assets/fonts/Caveat-Variable.ttf'),
     'poppins': require('./assets/fonts/Poppins-Regular.ttf'),
     'poppins-light': require('./assets/fonts/Poppins-Light.ttf'),
     'poppins-bold': require('./assets/fonts/Poppins-Bold.ttf'),

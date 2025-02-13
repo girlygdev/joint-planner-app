@@ -31,6 +31,7 @@ const LoginForm = ({ onSubmit, isLoading=false }) => {
                 textContentType: 'emailAddress',
                 autoComplete: 'email',
                 autoCapitalize: 'none',
+                keyboardType: 'email-address'
               }}
             />
           </View>

@@ -14,8 +14,9 @@ import EmptyAgendaComponent from '../../components/calendar/EmptyAgendaComponent
 import _, {isEmpty, map} from 'lodash';
 import Text from '../../components/UI/Text';
 import {db} from '../../../firebaseConfig';
-import {collection, query, orderBy, onSnapshot} from 'firebase/firestore';
+import {collection, query, where, orderBy, onSnapshot} from 'firebase/firestore';
 import {useIsFocused} from '@react-navigation/native';
+import useAuthStore from '../../store/useAuthStore';
 
 // Temporary remove defaultProps error
 ExpandableCalendar.defaultProps = undefined;
@@ -25,12 +26,13 @@ const CalendarHomeScreen = ({navigation}) => {
   const [selectedDate, setSelectedDate] = useState(currentDate);
   const [events, setEvents] = useState([]);
   const isFocused = useIsFocused();
+  const {user} = useAuthStore(state => state)
 
   useEffect(() => {
     if (!isFocused) return;
 
     const eventsRef = collection(db, 'events');
-    const q = query(eventsRef, orderBy('timestamp', 'asc'));
+    const q = query(eventsRef, where('uid', '==', user.uid), orderBy('timestamp', 'asc'));
 
     const unsubscribe = onSnapshot(
       q,
@@ -39,7 +41,7 @@ const CalendarHomeScreen = ({navigation}) => {
           id: doc.id,
           ...doc.data(),
         }));
-
+        
         setEvents(allEvents);
       },
       (error) => {
