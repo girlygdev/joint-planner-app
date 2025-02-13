@@ -5,13 +5,13 @@ import GlobalStyle from '../../../constants/colors';
 import AgendaFormComponent from '../../../components/calendar/AgendaFormComponent';
 import useAuthStore from '../../../store/useAuthStore';
 import {db} from '../../../../firebaseConfig';
-import ScreenLoader from '../../../components/UI/ScreenLoader';
 import {collection, addDoc, serverTimestamp} from 'firebase/firestore';
+import useAppStore from '../../../store/useAppStore';
 
 const AddAgendaScreen = ({route, navigation}) => {
   const {date} = route.params;
   const {user} = useAuthStore((state) => state);
-  const [isLoading, setIsLoading] = useState(false);
+  const {setIsLoading} = useAppStore(state => state)
 
   const saveAgendaHandler = async (values) => {
     setIsLoading(true);
@@ -47,12 +47,8 @@ const AddAgendaScreen = ({route, navigation}) => {
   }, [navigation, date]);
 
   return (
-    <View style={styles.root}>
-      {isLoading && <ScreenLoader />}
-
-      <View style={styles.container}>
-        <AgendaFormComponent onSubmit={saveAgendaHandler} />
-      </View>
+    <View style={styles.container}>
+      <AgendaFormComponent onSubmit={saveAgendaHandler} />
     </View>
   );
 };

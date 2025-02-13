@@ -5,7 +5,7 @@ import {Formik} from 'formik';
 import RegisterSchema from '../../schemas/RegisterSchema';
 import Button from '../UI/Button';
 
-const RegisterForm = ({ onSubmit, isLoading }) => {
+const RegisterForm = ({onSubmit}) => {
   const [authValues, setAuthValues] = useState({
     email: '',
     confirmEmail: '',
@@ -98,7 +98,6 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
             style={{marginTop: 8}}
             onPress={handleSubmit}
             color={'secondary'}
-            disabled={isLoading}
           />
         </>
       )}

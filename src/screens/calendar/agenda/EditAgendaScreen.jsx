@@ -1,27 +1,27 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import moment from 'moment';
 import GlobalStyle from '../../../constants/colors';
 import AgendaFormComponent from '../../../components/calendar/AgendaFormComponent';
 import {db} from '../../../../firebaseConfig';
-import ScreenLoader from '../../../components/UI/ScreenLoader';
 import {serverTimestamp, doc, updateDoc, deleteDoc} from 'firebase/firestore';
 import Button from '../../../components/UI/Button';
+import useAppStore from '../../../store/useAppStore';
 
 const EditAgendaScreen = ({route, navigation}) => {
   const {event} = route.params;
-  const [isLoading, setIsLoading] = useState(false);
+  const {setIsLoading} = useAppStore(state => state)
 
   const editAgendaHandler = async (values) => {
     setIsLoading(true);
 
     try {
-      const eventRef = doc(db, 'events', event.id)
-      
+      const eventRef = doc(db, 'events', event.id);
+
       await updateDoc(eventRef, {
         content: values,
-        timeStamp: serverTimestamp()
-      })
+        timeStamp: serverTimestamp(),
+      });
 
       setIsLoading(false);
       navigation.goBack();
@@ -35,9 +35,9 @@ const EditAgendaScreen = ({route, navigation}) => {
     setIsLoading(true);
 
     try {
-      const eventRef = doc(db, 'events', event.id)
-      
-      await deleteDoc(eventRef)
+      const eventRef = doc(db, 'events', event.id);
+
+      await deleteDoc(eventRef);
 
       setIsLoading(false);
       navigation.goBack();
@@ -45,7 +45,7 @@ const EditAgendaScreen = ({route, navigation}) => {
       console.log(error);
       setIsLoading(false);
     }
-  }
+  };
 
   useLayoutEffect(() => {
     if (event) {
@@ -62,21 +62,23 @@ const EditAgendaScreen = ({route, navigation}) => {
   if (!event) return null;
 
   return (
-    <View style={styles.root}>
-      {isLoading && <ScreenLoader />}
+    <View style={styles.container}>
+      <AgendaFormComponent
+        initialValues={{
+          title: event.title ?? '',
+          time: event.time ?? null,
+          notes: event.notes ?? '',
+        }}
+        onSubmit={editAgendaHandler}
+      />
 
-      <View style={styles.container}>
-        <AgendaFormComponent
-          initialValues={{
-            title: event.title ?? '',
-            time: event.time ?? null,
-            notes: event.notes ?? '',
-          }}
-          onSubmit={editAgendaHandler}
-        />
-
-        <Button flat onPress={deleteEventHandler} text='Delete' color='error' style={{ marginTop: 20 }}/>
-      </View>
+      <Button
+        flat
+        onPress={deleteEventHandler}
+        text='Delete'
+        color='error'
+        style={{marginTop: 20}}
+      />
     </View>
   );
 };
@@ -84,9 +86,6 @@ const EditAgendaScreen = ({route, navigation}) => {
 export default EditAgendaScreen;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: GlobalStyle.colors.background,

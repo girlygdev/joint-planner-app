@@ -14,34 +14,42 @@ import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScreenLoader from '../../components/UI/ScreenLoader';
-import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
-import { auth, db } from '../../../firebaseConfig';
-import { deleteUser } from 'firebase/auth';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
+import {auth, db} from '../../../firebaseConfig';
+import {deleteUser} from 'firebase/auth';
+import useAppStore from '../../store/useAppStore';
 
 const ProfileScreen = () => {
   const {user, logout} = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const {setIsLoading} = useAppStore((state) => state);
 
   const permanentDeleteAccount = async () => {
     setIsLoading(true);
     try {
-      const eventsRef = collection(db, 'events')
+      const eventsRef = collection(db, 'events');
       const q = query(eventsRef, where('uid', '==', user.uid));
       const querySnapshot = await getDocs(q);
 
       const deletePromises = querySnapshot.docs.map((eventDoc) => {
-        deleteDoc(doc(db, 'events', eventDoc.id))
-      })
+        deleteDoc(doc(db, 'events', eventDoc.id));
+      });
 
       // Delete all events first
       await Promise.all(deletePromises);
 
       // Delete user from auth table
-      const currentUser = auth.currentUser
-      await deleteUser(currentUser)
+      const currentUser = auth.currentUser;
+      await deleteUser(currentUser);
 
       setIsLoading(false);
-      logout()
+      logout();
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -70,97 +78,93 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={styles.root}>
-      {isLoading && <ScreenLoader />}
-
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            <Image source={AvatarSm} style={styles.avatar} />
-          </View>
-
-          <Text bold md>
-            User Name
-          </Text>
-          <Text sm light>
-            {user.email}
-          </Text>
-
-          <Button
-            inline
-            onPress={logout}
-            text='Edit profile'
-            rounded
-            style={{marginTop: 20}}
-          />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.avatarContainer}>
+          <Image source={AvatarSm} style={styles.avatar} />
         </View>
 
-        <View style={styles.content}>
-          <View style={styles.contentDetails}>
-            <Text caption light>
-              Details
-            </Text>
+        <Text bold md>
+          User Name
+        </Text>
+        <Text sm light>
+          {user?.email}
+        </Text>
 
-            <View style={styles.list}>
-              <View style={styles.listItem}>
-                <Ionicons
-                  name='calendar-number'
-                  size={24}
-                  color={GlobalStyle.colors.primary.main}
-                />
-                <Text light style={{flex: 1, marginHorizontal: 5}}>
-                  Total events created
-                </Text>
-                <Text
-                  bold
-                  md
-                  color={'secondary'}
-                  style={{marginHorizontal: 5, paddingVertical: 0}}
-                >
-                  0
-                </Text>
-              </View>
+        <Button
+          inline
+          onPress={logout}
+          text='Edit profile'
+          rounded
+          style={{marginTop: 20}}
+        />
+      </View>
 
-              <View style={styles.listItem}>
-                <Ionicons
-                  name='checkbox'
-                  size={24}
-                  color={GlobalStyle.colors.primary.main}
-                />
-                <Text light style={{flex: 1, marginHorizontal: 5}}>
-                  Total tasks created
-                </Text>
-                <Text
-                  bold
-                  md
-                  color={'secondary'}
-                  style={{marginHorizontal: 5, paddingVertical: 0}}
-                >
-                  0
-                </Text>
-              </View>
+      <View style={styles.content}>
+        <View style={styles.contentDetails}>
+          <Text caption light>
+            Details
+          </Text>
+
+          <View style={styles.list}>
+            <View style={styles.listItem}>
+              <Ionicons
+                name='calendar-number'
+                size={24}
+                color={GlobalStyle.colors.primary.main}
+              />
+              <Text light style={{flex: 1, marginHorizontal: 5}}>
+                Total events created
+              </Text>
+              <Text
+                bold
+                md
+                color={'secondary'}
+                style={{marginHorizontal: 5, paddingVertical: 0}}
+              >
+                0
+              </Text>
+            </View>
+
+            <View style={styles.listItem}>
+              <Ionicons
+                name='checkbox'
+                size={24}
+                color={GlobalStyle.colors.primary.main}
+              />
+              <Text light style={{flex: 1, marginHorizontal: 5}}>
+                Total tasks created
+              </Text>
+              <Text
+                bold
+                md
+                color={'secondary'}
+                style={{marginHorizontal: 5, paddingVertical: 0}}
+              >
+                0
+              </Text>
             </View>
           </View>
-
-          <Button
-            outlined
-            color={'dark'}
-            text={'Logout'}
-            rounded
-            onPress={logout}
-          />
-
-          <Button
-            flat
-            color={'error'}
-            text={'DELETE ACCOUNT'}
-            rounded
-            onPress={deleteAccountHandler}
-            style={{marginTop: 15}}
-          />
         </View>
-      </SafeAreaView>
-    </View>
+
+        <Button
+          outlined
+          color={'dark'}
+          text={'Logout'}
+          rounded
+          onPress={logout}
+        />
+
+        <Button
+          flat
+          color={'error'}
+          text={'DELETE ACCOUNT'}
+          rounded
+          onPress={deleteAccountHandler}
+          style={{marginTop: 15}}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

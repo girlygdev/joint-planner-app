@@ -6,24 +6,22 @@ import LoginForm from '../../components/auth/LoginForm';
 import {useAuth} from '../../hooks/auth/useAuth';
 import useFirebaseAuthError from '../../hooks/auth/useFirebaseAuthError';
 import InlineToast from '../../components/UI/InlineToast';
-import ScreenLoader from '../../components/UI/ScreenLoader';
-import { useState } from 'react';
+import useAppStore from '../../store/useAppStore';
 
 const LoginScreen = ({navigation}) => {
   const {login} = useAuth();
   const {errorMessage, handleAuthError} = useFirebaseAuthError();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const {setIsLoading} = useAppStore((state) => state);
 
   const loginAccountHandler = async (values) => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       await login(values.email, values.password);
-      setIsLoading(false)
+      setIsLoading(false);
     } catch (error) {
       handleAuthError(error);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -32,48 +30,33 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.root}>
-      {isLoading && <ScreenLoader />}
-
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../../assets/logo/logo.png')}
-            style={styles.logo}
-          />
-        </View>
-
-        <View style={styles.headerContainer}>
-          <Text
-            lg
-            bold
-          >
-            Sign in
-          </Text>
-          <Text sm>Log back in to your account.</Text>
-        </View>
-
-        <LoginForm
-          isLoading={isLoading}
-          onSubmit={loginAccountHandler}
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../../assets/logo/logo.png')}
+          style={styles.logo}
         />
+      </View>
 
-        {errorMessage && (
-          <InlineToast
-            color='error'
-            message={errorMessage}
-          />
-        )}
+      <View style={styles.headerContainer}>
+        <Text lg bold>
+          Sign in
+        </Text>
+        <Text sm>Log back in to your account.</Text>
+      </View>
 
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Don't have an account?</Text>
-          <Button
-            text='Register'
-            color={'primary'}
-            flat
-            onPress={navigateToRegister}
-          />
-        </View>
+      <LoginForm onSubmit={loginAccountHandler} />
+
+      {errorMessage && <InlineToast color='error' message={errorMessage} />}
+
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>Don't have an account?</Text>
+        <Button
+          text='Register'
+          color={'primary'}
+          flat
+          onPress={navigateToRegister}
+        />
       </View>
     </View>
   );
@@ -82,9 +65,6 @@ const LoginScreen = ({navigation}) => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: GlobalStyle.colors.background,

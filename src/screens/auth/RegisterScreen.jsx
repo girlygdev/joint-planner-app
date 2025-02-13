@@ -6,14 +6,12 @@ import RegisterForm from '../../components/auth/RegisterForm';
 import {useAuth} from '../../hooks/auth/useAuth';
 import InlineToast from '../../components/UI/InlineToast';
 import useFirebaseAuthError from '../../hooks/auth/useFirebaseAuthError';
-import ScreenLoader from '../../components/UI/ScreenLoader';
-import {useState} from 'react';
+import useAppStore from '../../store/useAppStore';
 
 const RegisterScreen = ({navigation}) => {
   const {register} = useAuth();
   const {errorMessage, handleAuthError} = useFirebaseAuthError();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const {setIsLoading} = useAppStore((state) => state);
 
   const createAccountHandler = async (values) => {
     setIsLoading(true);
@@ -32,48 +30,28 @@ const RegisterScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.root}>
-      {isLoading && <ScreenLoader />}
-      
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../../assets/logo/logo.png')}
-            style={styles.logo}
-          />
-        </View>
-
-        <View style={styles.headerContainer}>
-          <Text
-            lg
-            bold
-          >
-            Welcome to your next planner!
-          </Text>
-          <Text sm>Ready to sign up for an account?</Text>
-        </View>
-
-        <RegisterForm
-          isLoading={isLoading}
-          onSubmit={createAccountHandler}
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../../assets/logo/logo.png')}
+          style={styles.logo}
         />
+      </View>
 
-        {errorMessage && (
-          <InlineToast
-            color='error'
-            message={errorMessage}
-          />
-        )}
+      <View style={styles.headerContainer}>
+        <Text lg bold>
+          Welcome to your next planner!
+        </Text>
+        <Text sm>Ready to sign up for an account?</Text>
+      </View>
 
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Already have an account?</Text>
-          <Button
-            text='Login'
-            color={'primary'}
-            flat
-            onPress={navigateToLogin}
-          />
-        </View>
+      <RegisterForm onSubmit={createAccountHandler} />
+
+      {errorMessage && <InlineToast color='error' message={errorMessage} />}
+
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>Already have an account?</Text>
+        <Button text='Login' color={'primary'} flat onPress={navigateToLogin} />
       </View>
     </View>
   );
@@ -82,9 +60,6 @@ const RegisterScreen = ({navigation}) => {
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: GlobalStyle.colors.background,

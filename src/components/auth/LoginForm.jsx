@@ -5,7 +5,7 @@ import {Formik} from 'formik';
 import LoginSchema from '../../schemas/LoginSchema';
 import Button from '../UI/Button';
 
-const LoginForm = ({ onSubmit, isLoading=false }) => {
+const LoginForm = ({ onSubmit }) => {
   const [authValues, setAuthValues] = useState({
     email: '',
     password: '',
@@ -58,7 +58,6 @@ const LoginForm = ({ onSubmit, isLoading=false }) => {
             style={{marginTop: 8}}
             onPress={handleSubmit}
             color={'secondary'}
-            disabled={isLoading}
           />
         </>
       )}
