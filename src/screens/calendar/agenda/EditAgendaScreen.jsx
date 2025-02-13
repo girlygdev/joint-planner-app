@@ -5,7 +5,8 @@ import GlobalStyle from '../../../constants/colors';
 import AgendaFormComponent from '../../../components/calendar/AgendaFormComponent';
 import {db} from '../../../../firebaseConfig';
 import ScreenLoader from '../../../components/UI/ScreenLoader';
-import {serverTimestamp, doc, updateDoc} from 'firebase/firestore';
+import {serverTimestamp, doc, updateDoc, deleteDoc} from 'firebase/firestore';
+import Button from '../../../components/UI/Button';
 
 const EditAgendaScreen = ({route, navigation}) => {
   const {event} = route.params;
@@ -29,6 +30,22 @@ const EditAgendaScreen = ({route, navigation}) => {
       setIsLoading(false);
     }
   };
+
+  const deleteEventHandler = async () => {
+    setIsLoading(true);
+
+    try {
+      const eventRef = doc(db, 'events', event.id)
+      
+      await deleteDoc(eventRef)
+
+      setIsLoading(false);
+      navigation.goBack();
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
 
   useLayoutEffect(() => {
     if (event) {
@@ -57,6 +74,8 @@ const EditAgendaScreen = ({route, navigation}) => {
           }}
           onSubmit={editAgendaHandler}
         />
+
+        <Button flat onPress={deleteEventHandler} text='Delete' color='error' style={{ marginTop: 20 }}/>
       </View>
     </View>
   );
