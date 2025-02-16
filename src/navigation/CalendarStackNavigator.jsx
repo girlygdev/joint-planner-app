@@ -7,19 +7,20 @@ import EditAgendaScreen from '../screens/calendar/agenda/EditAgendaScreen';
 
 const Stack = createNativeStackNavigator();
 
-const CalendarNavigator = () => {
+const CalendarStackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName='CalendarHome'>
+    <Stack.Navigator initialRouteName='CalendarHome' screenOptions={{
+      headerTintColor: GlobalStyle.colors.text.light,
+      headerTitleStyle: {
+        fontFamily: 'poppins',
+      },
+    }}>
       <Stack.Screen
         name='CalendarHome'
         component={CalendarHomeScreen}
         options={{
           title: 'Calendar',
           headerStyle: {backgroundColor: GlobalStyle.colors.primary.main},
-          headerTintColor: GlobalStyle.colors.text.light,
-          headerTitleStyle: {
-            fontFamily: 'poppins',
-          },
         }}
       />
 
@@ -30,10 +31,6 @@ const CalendarNavigator = () => {
           presentation: 'modal',
           title: 'New Plan',
           headerStyle: {backgroundColor: GlobalStyle.colors.secondary.main},
-          headerTintColor: GlobalStyle.colors.text.light,
-          headerTitleStyle: {
-            fontFamily: 'poppins',
-          },
         }}
       />
 
@@ -44,14 +41,10 @@ const CalendarNavigator = () => {
           presentation: 'modal',
           title: 'Edit Plan',
           headerStyle: {backgroundColor: GlobalStyle.colors.secondary.main},
-          headerTintColor: GlobalStyle.colors.text.light,
-          headerTitleStyle: {
-            fontFamily: 'poppins',
-          },
         }}
       />
     </Stack.Navigator>
   );
 };
 
-export default CalendarNavigator;
+export default CalendarStackNavigator;

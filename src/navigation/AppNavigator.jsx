@@ -3,7 +3,9 @@ import ProfileScreen from '../screens/user/ProfileScreen';
 import NoteScreen from '../screens/note/NoteScreen';
 import GlobalStyle from '../constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CalendarNavigator from './CalendarNavigator';
+import CalendarStackNavigator from './CalendarStackNavigator';
+import EditProfileScreen from '../screens/user/EditProfileScreen';
+import ProfileStackNavigator from './ProfileStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +25,7 @@ const AppNavigator = () => {
     >
       <Tab.Screen
         name='Calendar'
-        component={CalendarNavigator}
+        component={CalendarStackNavigator}
         options={{
           headerShown: false,
           tabBarIcon: ({color, size}) => {
@@ -54,8 +56,9 @@ const AppNavigator = () => {
       />
       <Tab.Screen
         name='Profile'
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({color, size}) => {
             return (
               <Ionicons

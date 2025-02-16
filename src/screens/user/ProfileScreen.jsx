@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {
   Alert,
   Image,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   View,
@@ -13,7 +12,6 @@ import AvatarSm from '../../../assets/avatar/avatar_500.png';
 import GlobalStyle from '../../constants/colors';
 import Text from '../../components/UI/Text';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ScreenLoader from '../../components/UI/ScreenLoader';
 import {
   collection,
   deleteDoc,
@@ -27,7 +25,7 @@ import {deleteUser} from 'firebase/auth';
 import useAppStore from '../../store/useAppStore';
 import useAuthStore from '../../store/useAuthStore';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const {user, logout} = useAuth();
   const {setIsLoading} = useAppStore((state) => state);
   const {eventCount, taskCount} = useAuthStore(state => state)
@@ -79,6 +77,10 @@ const ProfileScreen = () => {
     );
   };
 
+  const editProfileHandler = () => {
+    navigation.navigate('EditProfile')
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -95,7 +97,7 @@ const ProfileScreen = () => {
 
         <Button
           inline
-          onPress={logout}
+          onPress={editProfileHandler}
           text='Edit profile'
           rounded
           style={{marginTop: 20}}
@@ -173,9 +175,6 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: GlobalStyle.colors.background,

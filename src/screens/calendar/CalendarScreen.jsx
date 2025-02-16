@@ -160,7 +160,6 @@ const CalendarHomeScreen = ({navigation}) => {
         <IconButton
           icon='add'
           onPress={addPlanHandler}
-          outlined
           style={styles.addButton}
         />
       </SafeAreaView>
