@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   Image,
@@ -17,6 +17,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  getDoc,
   query,
   where,
 } from 'firebase/firestore';
@@ -24,11 +25,27 @@ import {auth, db} from '../../../firebaseConfig';
 import {deleteUser} from 'firebase/auth';
 import useAppStore from '../../store/useAppStore';
 import useAuthStore from '../../store/useAuthStore';
+import { useIsFocused } from '@react-navigation/native';
 
 const ProfileScreen = ({ navigation }) => {
   const {user, logout} = useAuth();
   const {setIsLoading} = useAppStore((state) => state);
   const {eventCount, taskCount} = useAuthStore(state => state)
+  const [profile, setProfile] = useState()
+  const isFocused = useIsFocused()
+
+  useEffect(() => {    
+    if (!isFocused) return
+
+    const fetchUser = async () => {
+      const userRef = doc(db, 'users', user.uid)
+      const userSnap = await getDoc(userRef)
+
+      if (userSnap) setProfile(userSnap.data())
+    }
+    
+    fetchUser()
+  }, [isFocused, user.id])
 
   const permanentDeleteAccount = async () => {
     setIsLoading(true);
@@ -81,15 +98,27 @@ const ProfileScreen = ({ navigation }) => {
     navigation.navigate('EditProfile')
   }
 
+  const photoSource = useMemo(() => {
+    if (profile) {
+      return {uri: profile.photo_uri}
+    }
+
+    return AvatarSm 
+  }, [profile?.photo_uri])
+
+  const name = useMemo(() => {
+    return profile?.name ?? ''
+  }, [profile?.name])
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
-          <Image source={AvatarSm} style={styles.avatar} />
+          <Image source={photoSource} style={styles.avatar} />
         </View>
 
         <Text bold md>
-          User Name
+          {name}
         </Text>
         <Text sm light>
           {user?.email}
@@ -189,6 +218,9 @@ const styles = StyleSheet.create({
   avatar: {
     width: 100,
     height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: GlobalStyle.colors.light.main,
   },
   content: {
     flex: 1,

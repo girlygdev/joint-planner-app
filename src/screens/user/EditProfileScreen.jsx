@@ -20,11 +20,13 @@ import {
   useMediaLibraryPermissions,
 } from 'expo-image-picker';
 import useAuthStore from '../../store/useAuthStore';
-import {db} from '../../../firebaseConfig';
-import {doc, updateDoc} from 'firebase/firestore';
+import {db, storage} from '../../../firebaseConfig';
+import {doc, getDoc, setDoc, updateDoc, } from 'firebase/firestore';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage'
 import ProfileFormComponent from '../../components/profile/ProfileFormComponent';
+import * as ImageManipulator from 'expo-image-manipulator'
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({ navigation }) => {
   const [cameraPermission, requestPermission] = useCameraPermissions();
   const [galleryPermission, requestGalleryPermission] =
     useMediaLibraryPermissions();
@@ -38,17 +40,30 @@ const EditProfileScreen = () => {
       if (profileImage) {
         downloadedUri = await uploadImageAsync(profileImage.uri, user.uid);
       }
-  
+
       const userRef = doc(db, 'users', user.uid);
-  
-      await updateDoc(userRef, {
-        photo_uri: downloadedUri,
-        name: '',
-      });
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        await updateDoc(userRef, {
+          photo_uri: downloadedUri,
+          name: values.name ?? "",
+        });
+      } else {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          photo_uri: downloadedUri,
+          name: values.name ?? "",
+          created_at: new Date().toISOString(),
+        })
+      }
+
+      navigation.navigate('ProfileHome')
     } catch (error) {
       console.log(error)
+      Alert.alert('Oops!', 'Something went wrong when updating the profile. Please try again.')
     }
-    
   };
 
   const verifyPermissions = async () => {
@@ -132,10 +147,16 @@ const EditProfileScreen = () => {
   };
 
   const uploadImageAsync = async (uri, uid) => {
-    const storage = getStorage();
+    // resize image
+    const resizedPhoto = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 300, height: 300 } }],
+      { format: ImageManipulator.SaveFormat.JPEG }
+    );
+
     const storageRef = ref(storage, `profile_photos/${uid}.jpg`);
 
-    const response = await fetch(uri);
+    const response = await fetch(resizedPhoto.uri);
     const blob = await response.blob();
 
     await uploadBytes(storageRef, blob);
