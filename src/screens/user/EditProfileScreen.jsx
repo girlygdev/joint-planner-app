@@ -7,8 +7,6 @@ import {
   Linking,
 } from 'react-native';
 import GlobalStyle from '../../constants/colors';
-import Text from '../../components/UI/Text';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AvatarSm from '../../../assets/avatar/avatar_500.png';
 import {useState} from 'react';
 import IconButton from '../../components/UI/IconButton';
@@ -25,20 +23,27 @@ import {doc, getDoc, setDoc, updateDoc, } from 'firebase/firestore';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage'
 import ProfileFormComponent from '../../components/profile/ProfileFormComponent';
 import * as ImageManipulator from 'expo-image-manipulator'
+import useAppStore from '../../store/useAppStore';
 
-const EditProfileScreen = ({ navigation }) => {
+const EditProfileScreen = ({ navigation, route }) => {
+  const { profile } = route.params;
+  
   const [cameraPermission, requestPermission] = useCameraPermissions();
   const [galleryPermission, requestGalleryPermission] =
     useMediaLibraryPermissions();
-  const {user} = useAuthStore((state) => state);
 
-  const [profileImage, setProfileImage] = useState();
+  const {setIsLoading} = useAppStore(state => state)
+
+  const {user} = useAuthStore((state) => state);
+  const [profileImage, setProfileImage] = useState(profile?.photo_uri);
 
   const submitProfileUpdateHandler = async (values) => {
+    setIsLoading(true)
+
     try {
       let downloadedUri = '';
       if (profileImage) {
-        downloadedUri = await uploadImageAsync(profileImage.uri, user.uid);
+        downloadedUri = await uploadImageAsync(profileImage, user.uid);
       }
 
       const userRef = doc(db, 'users', user.uid);
@@ -59,9 +64,10 @@ const EditProfileScreen = ({ navigation }) => {
         })
       }
 
-      navigation.navigate('ProfileHome')
+      navigation.goBack();
+      setIsLoading(false)
     } catch (error) {
-      console.log(error)
+      setIsLoading(false)
       Alert.alert('Oops!', 'Something went wrong when updating the profile. Please try again.')
     }
   };
@@ -104,7 +110,7 @@ const EditProfileScreen = ({ navigation }) => {
 
     if (pickedPhoto) {
       const photo = pickedPhoto.assets[0];
-      setProfileImage(photo);
+      setProfileImage(photo.uri);
     }
   };
 
@@ -117,7 +123,7 @@ const EditProfileScreen = ({ navigation }) => {
 
     if (pickedPhoto) {
       const photo = pickedPhoto.assets[0];
-      setProfileImage(photo);
+      setProfileImage(photo.uri);
     }
   };
 
@@ -151,7 +157,7 @@ const EditProfileScreen = ({ navigation }) => {
     const resizedPhoto = await ImageManipulator.manipulateAsync(
       uri,
       [{ resize: { width: 300, height: 300 } }],
-      { format: ImageManipulator.SaveFormat.JPEG }
+      { compress: .9, format: ImageManipulator.SaveFormat.JPEG }
     );
 
     const storageRef = ref(storage, `profile_photos/${uid}.jpg`);
@@ -169,7 +175,7 @@ const EditProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={profileImage ? {uri: profileImage.uri} : AvatarSm}
+          source={profileImage ? {uri: profileImage} : AvatarSm}
           style={styles.avatar}
         />
         <IconButton
@@ -183,7 +189,7 @@ const EditProfileScreen = ({ navigation }) => {
       <View style={styles.content}>
         <ProfileFormComponent
           initialValues={{
-            name: user.name ?? '',
+            name: profile?.name ?? '',
             email: user.email ?? '',
           }}
           onSubmit={submitProfileUpdateHandler}

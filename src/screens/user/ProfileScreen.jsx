@@ -35,17 +35,19 @@ const ProfileScreen = ({ navigation }) => {
   const isFocused = useIsFocused()
 
   useEffect(() => {    
-    if (!isFocused) return
+    if (!isFocused || !user?.uid) return
 
     const fetchUser = async () => {
+      setIsLoading(true);
       const userRef = doc(db, 'users', user.uid)
       const userSnap = await getDoc(userRef)
 
       if (userSnap) setProfile(userSnap.data())
+      setIsLoading(false);
     }
     
     fetchUser()
-  }, [isFocused, user.id])
+  }, [isFocused, user?.uid])
 
   const permanentDeleteAccount = async () => {
     setIsLoading(true);
@@ -95,7 +97,9 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const editProfileHandler = () => {
-    navigation.navigate('EditProfile')
+    navigation.navigate('EditProfile', {
+      profile: profile
+    })
   }
 
   const photoSource = useMemo(() => {
@@ -216,9 +220,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     borderWidth: 2,
     borderColor: GlobalStyle.colors.light.main,
   },
